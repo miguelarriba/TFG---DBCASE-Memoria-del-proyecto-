@@ -85,6 +85,8 @@ Con respecto a la versión anterior, los cambios principales que ha sufrido la i
     \item Se ha pasado de una interfaz dividida en dos pestañas (diagrama entidad-relación y generación de código) a una sola, de forma que ahora se puede ver de un vistazo el diagrama y el código generado.
     \item El panel de generación de código se ha dividido en dos paneles distintos: Esquema lógico y esquema físico. De esta manera quedan ambos lenguajes en paneles independientes.
     \item Se han unificado el panel de información y el panel de dominios en un solo JTabbedPane.
+    \item Los paneles están separados mediante la clase JSplitPane \cite{split}, lo que permite al usuario cambiar a su antojo el tamaño de cada panel.
+    \item Se ha eliminado el panel de sucesos, ya que su utilidad era más bien para el desarrollo de la aplicación y no para el usuario.
 \end{itemize}
 \subsection{Panel de información}
 
@@ -94,7 +96,7 @@ Con respecto a la versión anterior, los cambios principales que ha sufrido la i
     \caption{Panel de Información}
 \end{figure}
 
-El panel de información muestra un esquema en forma de arbol del modelo entidad relación existente en el panel de diseño, y en él se puede ver de forma esquemática todos los elementos y cómo están relacionados.\\
+El panel de información muestra un esquema en forma de árbol del modelo entidad relación existente en el panel de diseño, y en él se puede ver de forma esquemática todos los elementos y cómo están relacionados.\\
 
 El panel de información ha sufrido profundos cambios que se describen a continuación:
 
@@ -145,24 +147,112 @@ Dentro del área de diseño se ha añadido una barra lateral que permite agregar
             \includegraphics[width=0.8\textwidth]{img/limitepanel.png}
             \caption{Colocación de nuevos elementos}
         \end{figure}
-        \item Los \textbf{atributos} siguen un comportamiento distinto
+        \item Los \textbf{atributos} siguen un comportamiento distinto debido a que dependen de la relación o entidad a la que pertenezcan. Los nuevos atributos se generan creando círculos concéntricos alrededor del elemento al que pertenecen, a diferencia de la versión anterior en la que simplemente se generaban a la derecha del elemento.\\
+        
+        Para realizar el cálculo de las coordenadas se ha creado una función con la ayuda de la función "sin" de la librería Math \cite{math}, que tiene en cuenta el número de atributos del elemento, el ancho del elemento y la distancia a los márgenes del diagrama (evitando que se generen nuevos atributos en posiciones negativas, obligando al usuario a desplazar el diagrama).\\
+        
+        \begin{lstlisting}[
+                   xleftmargin = -3.4cm,language=java]
+        p.setLocation(
+				Math.round(ancho*Math.sin(offset/(Math.PI/constant))+p.getX()), 
+				Math.round(alto*Math.sin(offset/(Math.PI/constant)-(Math.PI/2))+p.getY())
+				);
+        \end{lstlisting}
     \end{itemize}
 \end{itemize}
+\subsection{Paneles de texto}
+La forma en la que se presentan los códigos generados ha cambiado radicalmente, como se ha comentado anteriormente se ha dividido en dos paneles (modelo lógico y modelo físico). A continuación se describen en detalle todos los cambios que han sufrido.
+\begin{itemize}
+    \item Se han eliminado los botones de validar modelo y de limpiar área de texto.
+    \item La validación del modelo ahora se hace de forma automática cuando el usuario pulsa el botón de generar código (tanto para el modelo lógico como para el modelo físico).
+   \item La validación ahora solo muestra mensajes cuando existen errores o alertas en el diagrama. Anteriormente informaba de todas las comprobaciones realizadas, fueran correctas o no.
+   \item Ha desaparecido el botón de limpiar área y en su lugar los cuadros de texto son completamente editables, dando libertad al usuario para modificar o añadir cualquier texto que desee.
+   \item Los paneles han sufrido también un gran cambio en el aspecto visual. Están construidos mediante una clase "ReportPanel" que hereda de JTextPane. La clase modifica el panel pana que muestre contenido HTML mediante la función.\\
+   \begin{lstlisting}[backgroundcolor = \color{white},
+                   xleftmargin = 2cm,language=java,basicstyle=\medium]
+        setContentType("text/html");\end{lstlisting}
+        
 
-\begin{comment}
-- Disposicion de paneles
-    - Panel de añadir elemento
-    - Paneles de texto (HTML)
-    - reporte de errores colorines
-    - Cambios en el menú
+   El texto ahora se interpreta como código HTML y se representa como tal, lo que amplía enormemente las posibilidades de diseño. Se ha añadido en el código una sección css con los estilos del panel. Los estilos son generados teniendo en cuenta el tema seleccionado por el usuario y modifican varios aspectos como:
+   \begin{itemize}
+       \item Párrafos.
+       \item Títulos.
+       \item Listas.
+       \item Divisores.
+       \item Color de fondo.
+       \item Fuente y color de las letras.
+   \end{itemize}
+   \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{img/ejemploreport.png}
+            \caption{Ejemplo de modelo relacional.}
+    \end{figure}
+    Como se puede observar se ha optado por un diseño que divide en tarjetas las distintas secciones del código. Los mensajes de error y de aviso aparecen en distintos colores y se ubican siempre en la parte superior.
+    \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.8\textwidth]{img/ejemploreport2.png}
+            \caption{Ejemplo de mensajes de aviso y error.}
+    \end{figure}
+\end{itemize}
+\subsection{Perspectivas}
+Se ha implementado la posibilidad de elegir distintas perspectivas en las que se colocan los paneles en función de las necesidades del usuario. En la parte superior derecha de la aplicación aparece un menú de selección de perspectiva. Los iconos son generados mediante la librería Graphics2D \cite{g2d} y se adaptan a los colores del tema. Funcionan como "Botones de Radio", es decir que solo se permite tener seleccionada una de las perspectivas.\\
+\begin{figure}[H]
+            \centering
+            \includegraphics[width=0.5\textwidth]{img/perspectivas.png}
+            \caption{Menú de selección de perspectiva.}
+\end{figure}
+
+Se han desarrollado tres perspectivas:
+\begin{itemize}
+    \item \textbf{Código}: Divide la pantalla en tres paneles: panel de información / dominios, panel de esquema lógico y panel de esquema físico. Está pensado para permitir al usuario centrarse en la edición de códigos. Mantiene el panel de información / dominios para servir de referencia del diagrama dibujado.
+    \item \textbf{Completo}: Integra todos los paneles posibles y sirve para que el usuario tenga una visión global de todo el trabajo.
+    \item \textbf{Diseño}: Muestra el panel de diseño, la barra de añadir elementos y el panel de información / dominios. Con él se centra la atención en el diseño del modelo entidad relación dando todo el espacio de la pantalla para ello.
+\end{itemize}
+
+\subsection{Cambios en el panel de diseño}
+El panel de diseño también ha sufrido algunos cambios desde la versión anterior, aunque en general el panel sigue teniendo un comportamiento similar y los cambios producidos aquí han sido de poco impacto.
+
+\begin{itemize}
+    \item Se ha cambiado el aspecto de los elementos, añadiendo colores, resaltando los bordes cuando el elemento está seleccionado, cambiando la fuente de texto, y redondeando los bordes de las entidades.
+    \item Se ha acercado el zoom por defecto tanto en el panel principal como en en la miniatura, y se ha corregido la orientación del scroll para hacer zoom (funcionaba al revés de lo intuitivo).
+    \item Se han añadido flechas en las relaciones que lo requieren y también se han implementado las dobles líneas para las relaciones de participación total.
+\end{itemize}
+\subsection{Cambios en los cuadros de diálogo}
+DBCase dispone de cuadros de diálogo para realizar tareas como crear una relación, editar la cardinalidad de una entidad o guardar el proyecto en un archivo.\\
+
+En ésta versión se han modificado todos los cuadros de la siguiente manera.
+\begin{itemize}
+    \item Se han adaptado todos los elementos para adaptarlos a los temas elegidos por el usuario.
+    \item Se han eliminado los iconos que acompañaban a muchos de los cuadros y se ha simplificado su diseño. Se ha aumentado el tamaño de los cuadros de introducción de texto.
+\end{itemize}
+\subsection{Menú}
+El menú de opciones también ha sufrido algunos pequeños cambios.
+\begin{itemize}
+    \item Se han quitado los iconos que acompañaban a algunas de las opciones del menú, se ha aumentado el tamaño de letra y se ha conseguido que el menú se adapte al tema vigente. Para ello ha sido necesario crear una clase que herede de JMenuBar \cite{menu} y que modifique uno a uno los componentes necesarios.
+    \item En el menú de opciones se han quitado las opciones de ocultar el panel de sucesos (el panel ya no existe), y seleccionar el gestor de Base de Datos actual (Esta opción se ha desplazado al panel de esquema físico).\\
     
-- Perspectivas
-- Diagrama
-    - Colores
-    - Formas redondeadas
-    - Flechas
+    En su lugar se han añadido un menú desplegable para seleccionar el tema de entre todos los disponibles en la carpeta "themes", y una opción para mostrar o no los atributos posiblemente nulos.
+    
+    \item Se ha actualizado el texto de "Acerca de DBCASE".
+\end{itemize}
+\subsection{Archivo abierto}
+En la versión anterior existía un panel al pie de la aplicación que indicaba el directorio de trabajo actual, con la información del archivo temporal que se estaba usando para guardar los cambios en la aplicación. Esta información no era demasiado relevante para el usuario, y sería más útil indicar cual es el archivo abierto por el usuario.\\
 
-\end{comment}
+También existía en la barra de menús un botón que funcionaba como un semáforo de cambios (adoptaba el color verde cuando todos los cambios estaban guardados y el color rojo cuando existían cambios en el archivo temporal sin guardar en el archivo final). Finalmente este botón se ha quitado.\\
+
+Como solución se ha pensado indicar en la cabecera del programa cual es el archivo (xml) abierto por el usuario (en caso de que no haya creado un archivo nuevo). Si existen cambios en el programa sin guardar, el nombre del archivo viene seguido de un asterisco (*).\\
+
+De esta forma se han unificado y mejorado ambas funcionalidades en un espacio más reducido.
+
+\subsection{Logotipo}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{img/logoMac.png}
+    \caption{DBCASE en el dock de MacOS}
+\end{figure}
+Se ha diseñado un nuevo logotipo para la aplicación. El diseño está inspirado en el stack con el que se suelen representar las bases de datos. Se ha buscado darle aspecto de letra E mayúscula, ya que es la última letra del nombre del programa, y se han incluido una representación de los tres elementos principales del modelo entidad relación (atributos, entidades y relaciones).\\
+
+El logotipo aparece como icono de la aplicación tanto en sistemas operativo Windows como MacOS.
 
 %%%%%%%%%%%%%%%%
 \section{Cambios a nivel de funcionalidad}
@@ -170,12 +260,15 @@ Los cambios a nivel de funcionalidad se han centrado principalmente en las tradu
 
 - Errores arrastrados
 - guardar el estado de lenguaje, tema,
-- Validacion automatica del diseño
+- los mensajes de error anulan el codigo y los de aviso lo permiten
+- exportacion de los paneles editados
 - Exportación de los paneles por separado
 - Nuevas cosas
+- espacio para desplazar
 - nullables
 
 %%%%%%%%%%%%%%%%
 \section{Cambios a nivel de codigo}
 - Estructura de paneles
+- Carpeta projects
 - Implementacion con git
