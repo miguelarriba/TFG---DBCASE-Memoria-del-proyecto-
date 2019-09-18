@@ -1,9 +1,9 @@
-\chapter{Plan de trabajo}
+\chapter{Memoria de trabajo}
 Mi trabajo se ha centrado en mejorar la herramienta en los aspectos gráficos y funcionales, y añadiendo en la medida de lo posible todas las funcionalidades que hemos considerado necesarias para la aplicación.
 
 A continuación se describen con detalles los principales cambios y mejoras que se han implementado con respecto a la versión anterior.
 %%%%%%%%%%%%%%%%
-\section{Cambios a nivel de diseño}
+\section{Diseño}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{img/GUI_DBCASE.png}
@@ -255,20 +255,75 @@ Se ha diseñado un nuevo logotipo para la aplicación. El diseño está inspirad
 El logotipo aparece como icono de la aplicación tanto en sistemas operativo Windows como MacOS.
 
 %%%%%%%%%%%%%%%%
-\section{Cambios a nivel de funcionalidad}
+\section{Funcionalidad}
 Los cambios a nivel de funcionalidad se han centrado principalmente en las traducciones desde el esquema conceptual a los esquemas lógico y físico. Se han corregido algunos errores arrastrados desde la versión anterior, y se han implementado nuevas traducciones, mejorando sobre todo el esquema lógico.
 
-- Errores arrastrados
-- guardar el estado de lenguaje, tema,
-- los mensajes de error anulan el codigo y los de aviso lo permiten
-- exportacion de los paneles editados
-- Exportación de los paneles por separado
-- Nuevas cosas
-- espacio para desplazar
-- nullables
+\subsection{Esquema lógico}
+
+La traducción del diagrama entidad relación al modelo relacional ha sufrido grandes mejoras en esta versión.
+\begin{itemize}
+    \item Se ha depurado la traducción al modelo relacional, corrigiendo errores arrastrados desde la anterior versión.
+    \item Se han añadido varias secciones nuevas al esquema lógico.
+    \begin{itemize}
+        \item \textbf{Restricciones de integridad referencial}: En esta sección aparecen descritas de forma esquemática las restricciones de integridad referencial \cite{rir} generadas a partir del diagrama entidad relación.
+        \item \textbf{Restricciones perdidas}: Aquí aparecen todas las restricciones que pueden generarse a raíz del diagrama, pero que no son representadas en el modelo relacional.
+        \begin{itemize}
+            \item \textbf{Cardinalidad}: indica las restricciones que se pierden con respecto a la cardinalidad de las relaciones, por ejemplo para una cardinalidad de 1 a 23, indica que se ha perdido la cardinalidad máxima de 23 en la entidad.
+            \item \textbf{Restricciones de tabla}: muestra las restricciones de tabla introducidas manualmente por el usuario, así como algunas restricciones asociadas a los atributos (por ejemplo que el atributo sea de tipo unique).
+            \item \textbf{Claves candidatas}: informa de los atributos que funcionan como clave candidata de una determinada tabla.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\subsection{Exportación de códigos}
+Con respecto a la exportación de los códigos se han implementado las siguientes mejoras.
+
+\begin{itemize}
+    \item Se han implementado dos botones de exportación: uno para el esquema lógico y otro para el esquema físico. De esta forma se pueden guardar los códigos de forma independiente. El esquema lógico puede ser guardado en formato .txt, mientras que el esquema físico puede ser guardado en formato .sql y en formato .txt.
+    \item Se ha añadido la capacidad de guardar el texto modificado escrito por el usuario, de forma que al guardar el texto se guarda con las modificaciones existentes.
+    \item Esto también ocurre a la hora de ejecutar el código sql del esquema físico. El código ejecutado es el código con las modificaciones del usuario.
+    \item Para hacer posible el guardado y la ejecución de los códigos modificados, y dado que los paneles de texto funcionan con el formato HTML, ha sido necesaria la implementación de un sistema de traducción de texto HTML a texto plano.
+\end{itemize}
+\subsection{Atributos posiblemente nulos}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/nulls.png}
+    \caption{Representación de atributo posiblemente nulo.}
+\end{figure}
+Se ha implementado la capacidad de identificar los atributos posiblemente nulos. Si la opción está activada en el menú, los atributos que cumplan el requisito se mostrarán tanto en el panel de diseño, como en el panel de elementos y en el modelo relacional con un asterisco (*) al final del nombre del mismo.
+\subsection{Desplazamiento del diagrama}
+Se a añadido la opción de desplazar el diagrama en los ejes x e y manteniendo pulsada la barra espaciadora y arrastrando el panel. De esta forma se añade otra opción más a parte de la miniatura del diagrama para realizar el desplazamiento.
+\\
+
+\begin{lstlisting}[xleftmargin = 2cm,language=java]
+//Funcion que cambia el modo de uso del panel
+public void toggleDragMode(boolean b) {
+		if(b==mouseMode) return;
+		if(!mouseMode) {
+		//cambia el panel a modo desplazamiento
+			creaGraphMouse();
+			//Se anade el plugin de desplazamiento
+			graphMouse.add(translating);
+			graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+			vv.setGraphMouse(graphMouse);
+		}else {//cambia el panel a modo edición
+			creaGraphMouse();
+			//Se anade el plugin de edicion
+			graphMouse.add(picking);
+			graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+			vv.setGraphMouse(graphMouse);
+		}
+		mouseMode = !mouseMode;
+	}
+\end{lstlisting}
+
+El panel de diseño esta implementado usando la clase VisualizationViewer \cite{vv} (objeto vv en el ejemplo), disponible el la librería de Jung \cite{jung}. El funcionamiento del ratón viene dado por el objeto GraphMouse, cuyo funcionamiento depende del plugin que posea en cada caso.
+\subsection{Guardado de configuraciones}
+El archivo dbcase.config almacena algunas de las configuraciones del programa (como el lenguaje o el último archivo abierto), de forma que la próxima vez que el usuario inicie la aplicación estas configuraciones son recordadas. Ahora este archivo también almacena el último tema escogido por el usuario y la última perspectiva usada.
 
 %%%%%%%%%%%%%%%%
-\section{Cambios a nivel de codigo}
+\section{Código}
+\begin{comment}
 - Estructura de paneles
 - Carpeta projects
 - Implementacion con git
+\end{comment}
