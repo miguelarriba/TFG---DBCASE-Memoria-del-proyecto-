@@ -322,8 +322,23 @@ El archivo dbcase.config almacena algunas de las configuraciones del programa (c
 
 %%%%%%%%%%%%%%%%
 \section{Código}
-\begin{comment}
-- Estructura de paneles
-- Carpeta projects
-- Implementacion con git
-\end{comment}
+\subsection{Refactorización}
+El código de la aplicación ha sufrido un gran cambio durante todo el proceso de trabajo. Se ha intentado simplificar al máximo los paquetes y clases que configuran el programa así como reducir en la medida de lo posible el código sobrante o redundante.\\
+
+\begin{itemize}
+    \item Se han reordenado todas las clases a fin de estructurar el código según el patrón modelo vista controlador \cite{mvc}, de esta forma queda separada la parte gráfica de la aplicación de la parte lógica, quedando el controlador como intermediario entre las comunicaciones del usuario y el procesamiento de datos.
+    
+    \item Se ha intentado simplificar todo lo posible el código, haciéndolo más legible. Se ha procurado que las clases con muchas líneas de código se dividan en la medida de lo posible en otras clases que abarquen sus funcionalidades, de forma que el código quede mucho más mantenible. (Por ejemplo la clase controlador ha reducido su tamaño en 700 LDC, y la clase GUIPrincipal en 500 LDC, todo ello manteniendo intacto sus comportamientos).
+    
+    \item Muchos de los elementos de la vista fueron generados usando un software de creación de interfaces gráficas. Este tipo de herramientas, aunque son extremadamente potentes, el código que generan en muchas ocasiones es confuso y denso. Se ha intentado que el código que genera la vista quede más mantenible y legible, separando cada panel en su propia clase independiente.
+\end{itemize}
+\subsubsection{Nuevas carpetas}
+Ahora el proyecto incorpora dos nuevas carpetas.
+\begin{itemize}
+    \item \textbf{Themes}: almacena los temas por defecto y los posibles temas creados por el usuario.
+    \item \textbf{Projects}: Es la carpeta en la que se guardan por defecto todos los archivos generados por el usuario (proyectos o códigos sql y txt). Se crea automáticamente si no existe.
+\end{itemize}
+\subsection{Repositorio}
+Anteriormente el proyecto utilizaba CVS \cite{cvs} para el control de versiones. Durante este curso se ha decidido abandonar este método y pasar a utilizar un repositorio git.\\
+
+Los cambios realizados durante todo el año están reflejados en un repositorio público \cite{repo} en Github.
