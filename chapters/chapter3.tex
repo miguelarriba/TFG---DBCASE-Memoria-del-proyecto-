@@ -39,10 +39,56 @@ Como vemos, la herramienta permite realizar las dos funcionalidades principales 
     
     \item La herramienta no comprueba en ningún momento la corrección del diagrama. Puedes crear atributos sueltos o entidades débiles sin entidad fuerte, en este sentido es menos potente de lo que ya ofrece DBCase.\\
     
-    \item La herramienta no ofrece la opción de generar el modelo relacional.
-    
     \item Para generar el código SQL, el usuario debe salir del panel de edición e ir al listado de sus documentos, solo desde ahí y mediante un menú desplegable se da la posibilidad de generarlo, lo cual resulta muy poco intuitivo.
     \item No dispone de atajos de teclado.
 \end{enumerate}
 \section{SqlDBM}
+SqlDBM \cite{sqldbm} es una herramienta web de software privativo que permite realizar el diseño de una base de datos mediante su diagrama relacional y traducirlo a código ejecutable.\\
+
+Se trata de una herramienta muy profesional y completa y está pensada para la creación de bases de datos de forma rápida e intuitiva, sin necesidad de conocer el lenguaje de definición de datos.\\
+
+Tras un análisis, se han podido extraer las siguientes características acerca de la aplicación.
+\begin{itemize}
+    \item Permite realizar un diagrama relacional de tablas, pero no permite realizar el diagrama entidad relación.
+    \item Soporta varios gestores de bases de datos.
+    \item Permite realizar la traducción de diagrama a código y viceversa, utilizando ingeniería inversa. Para ello dispone de dos botones muy visibles en una barra lateral.
+    \item El área de trabajo cuenta con una barra de herramientas superior representadas mediante iconos. También permite añadir elementos (que en este caso son tablas, conexiones y notas).
+    \item Al añadir una tabla se obliga al usuario a rellenar directamente su nombre y sus atributos. Una vez creada da la posibilidad de modificarla pulsando sobre ella.
+    \item Posee un panel de información en el que muestra en forma de lista todas las tablas y conexiones existentes en el esquema.
+    \item Permite abrir y guardar proyectos, así como trabajar sobre ellos de forma colaborativa.
+    \item Posee un tema oscuro y otro claro para la interfaz.
+\end{itemize}
 \section{Conclusiones del estudio}
+La finalidad del estudio ha sido analizar las alternativas disponibles en el mercado observando cómo dan solución a los distintos problemas que se plantean al realizar una aplicación de este tipo.
+
+\begin{table}[H]
+\begin{tabular}{l|c|c|c|}
+\cline{2-4}
+                                 & \multicolumn{1}{l|}{\cellcolor[HTML]{D3F4FD}Diagrama ER} & \multicolumn{1}{l|}{\cellcolor[HTML]{D3F4FD}Traducción a modelo relacional} & \multicolumn{1}{l|}{\cellcolor[HTML]{D3F4FD}Traducción a código BD} \\ \hline
+\multicolumn{1}{|l|}{Draw.io}    & Sí                                                       & No                                                                          & No                                                                  \\ \hline
+\multicolumn{1}{|l|}{Smart Draw} & Sí                                                       & No                                                                          & No                                                                  \\ \hline
+\multicolumn{1}{|l|}{EDRPlus}    & Sí                                                       & Diagrama                                                                    & Sí                                                                  \\ \hline
+\multicolumn{1}{|l|}{SqlDBM}     & No                                                       & Diagrama a partir de código                                                 & Sí                                                                  \\ \hline
+\multicolumn{1}{|l|}{DBCase}     & Sí                                                       & En formato texto                                                            & Sí                                                                  \\ \hline
+\end{tabular}
+\end{table}
+
+En esta tabla se realiza una comparación entre los 4 programas analizados y DBCase, contrastando si dan solución o no a las principales funcionalidades que ofrece ya nuestra herramienta.\\
+
+\begin{itemize}
+    \item \textbf{Draw.io} y \textbf{Smart draw} son dos herramientas muy similares que ofrecen una solución muy buena a la hora de realizar el diseño del diagrama entidad relación. En este aspecto, pueden servir como referencia para mejorar la experiencia de diseño ofrecida por DBCase.
+    \item \textbf{SqlDBM} es de las herramientas analizadas la más enfocada a un ámbito profesional. Aunque no ofrece la posibilidad de crear un diagrama entidad relación, cubre de forma excelente el resto de funcionalidades que ofrece DBCase.
+    \item \textbf{EDRPlus} es quizás la herramienta más similar a DBCase, ya que cubre las tres funcionalidades principales ofrecidas por la herramienta.
+    \begin{itemize}
+        \item EDRPlus permite realizar un diseño del diagrama entidad relación muy similar al que puede realizarse con DBCase, sin embargo la notación usada para las relaciones no es la misma que la estudiada en la facultad.\\
+        
+        También da una mayor libertad al usuario a la hora de crear nuevos elementos, lo cual en este tipo de diagramas puede ser contraproducente ya que permite que se cometan más errores de diseño.
+        
+        \item Permite traducir el diagrama entidad relación a un diagrama relacional, pero no proporciona una alternativa en formato texto.
+        
+        \item El flujo de trabajo en EDRPlus es en general poco intuitivo, y para realizar las traducciones es necesario rebuscar entre los menús.
+        
+        \item Como punto a favor, EDRPlus es una aplicación web, no requiere instalación y permite almacenar los proyectos en su propio servidor.
+    \end{itemize}
+\end{itemize}
+De forma general, a raíz del estudio se puede decir que ninguna de las herramientas analizadas alcanza por completo los objetivos que pretende la herramienta DBCase, aunque se pueden extraer ideas muy útiles de como las mismas han solucionado los distintos problemas de diseño.
